@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.caven.redistool.controller.MainController">
+    <left>
+        <!-- 服务器列表部分保持不变 -->
+        <VBox spacing="10.0" prefWidth="300.0">
+            <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+            <HBox spacing="5.0" alignment="CENTER_LEFT">
+                <Label text="Redis 服务器" /><Button fx:id="addServerButton" text="+" onAction="#handleAddServer" />
+            </HBox>
+            <ListView fx:id="serverListView" />
+        </VBox>
+    </left>
+    <center>
+        <!-- 重新引入 StackPane 来管理视图切换 -->
+        <StackPane>
+            <!-- 1. 欢迎界面 (已恢复) -->
+            <VBox fx:id="welcomeCenter" alignment="CENTER" spacing="20.0">
+                <Label text="REDIS CONNECT TOOLS - GUI for Redis®" style="-fx-font-size: 24px; -fx-text-fill: black;" />
+                <ImageView fx:id="logoImage" fitWidth="100.0" fitHeight="100.0" />
+                <Label text="版本 2025.1" style="-fx-text-fill: black;" />
+                <Label text="Powered by Caven" style="-fx-text-fill: black; -fx-underline: true;" />
+            </VBox>
+
+            <!-- 2. 数据分栏界面 (初始不可见) -->
+            <SplitPane fx:id="mainSplitPane" dividerPositions="0.4" visible="false">
+                <!-- 左侧：Keys 树形结构 -->
+                <VBox fx:id="redisKeyView" spacing="5.0" minWidth="200">
+                    <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+                    <HBox spacing="5.0">
+                        <TextField fx:id="searchField" promptText="使用 * 模糊匹配" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="searchButton" text="搜索" onAction="#handleSearchKeys"/>
+                    </HBox>
+                    <TreeView fx:id="keyTreeView" VBox.vgrow="ALWAYS"/>
+                    <HBox spacing="10.0">
+                        <Button fx:id="refreshButton" text="刷新" onAction="#handleRefreshKeys" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="deleteButton" text="删除Key" onAction="#handleDeleteKeys" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-text-fill: red;"/>
+                        <Button fx:id="loadMoreButton" text="加载更多" onAction="#handleLoadMoreKeys" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 右侧：Key 内容详情 -->
+                <VBox fx:id="keyContentView" spacing="5.0">
+                    <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+                    <ToolBar>
+                        <Button text="刷新" onAction="#handleContentRefresh"/>
+                        <Button text="删除选中项" onAction="#handleContentDelete" style="-fx-text-fill: red;"/>
+                    </ToolBar>
+                    <StackPane VBox.vgrow="ALWAYS">
+                        <Label fx:id="welcomeLabel" text="双击左侧 Key 以查看内容" style="-fx-font-size: 16px;"/>
+                        <TextArea fx:id="stringContentView" visible="false" wrapText="true"/>
+                        <ListView fx:id="listContentView" visible="false"/>
+                        <TableView fx:id="hashContentView" visible="false">
+                            <columns>
+                                <TableColumn text="Field" prefWidth="200">
+                                    <cellValueFactory><PropertyValueFactory property="field" /></cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Value" prefWidth="350">
+                                    <cellValueFactory><PropertyValueFactory property="value" /></cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+                    </StackPane>
+                    <Button fx:id="contentLoadMoreButton" text="加载更多内容" onAction="#handleContentLoadMore" maxWidth="Infinity" visible="false"/>
+                </VBox>
+            </SplitPane>
+        </StackPane>
+    </center>
+</BorderPane>
